@@ -1,0 +1,19 @@
+uplinks:
+  npmjs:
+    url: https://registry.npmjs.org/
+    cache: true
+packages:
+  '@yourorg/*':
+    access: $authenticated
+    publish: $authenticated
+    # без proxy — только своё
+  'express':
+    access: $authenticated
+    proxy: npmjs
+  'pg':
+    access: $authenticated
+    proxy: npmjs
+  # catch-all отсутствует → всё остальное получает 404
+  '**':
+    access: $authenticated
+    publish: $authenticated
