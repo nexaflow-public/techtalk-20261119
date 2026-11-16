@@ -1,0 +1,8 @@
+# так делают все. это не защита.
+packages:
+  '@*/*':
+    access: $all
+    proxy: npmjs
+  '**':
+    access: $all
+    proxy: npmjs
