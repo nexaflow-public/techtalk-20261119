@@ -1,0 +1,62 @@
+# Назначение: подём внутреннего реестра npm с постоянным кешем; опциональные профили для PyPI и JVM.
+# Статус: ПРОВЕРЕНО (синтаксис Docker Compose v2 и структура конфига Verdaccio 5.x).
+#         Теги образов — плейсхолдеры: подставьте конкретную проверенную версию, latest не использовать.
+# Версии инструментов: Docker Compose v2; Verdaccio 5.x.
+# Пункты CHECKLIST.md: 1–6.
+
+services:
+  npm-gate:
+    image: "verdaccio/verdaccio:{{VERDACCIO_IMAGE_TAG}}"
+    container_name: npm-gate
+    restart: unless-stopped
+    ports:
+      - "4873:4873"
+    volumes:
+      # гейт, а не кеш: конфиг монтируется в путь по умолчанию
+      - ./verdaccio/gate.yaml:/verdaccio/conf/config.yaml:ro
+      # без этого тома рестарт обнуляет резолвинг (пункт 3)
+      - verdaccio-storage:/verdaccio/storage
+    networks:
+      supply-chain:
+        aliases:
+          - "{{GATE_HOST}}"
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://127.0.0.1:4873/-/ping',r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 20s
+
+  # Опционально: docker compose --profile python up -d
+  # Механизм запрета неразрешённого описан в devpi/README.md, статус НЕ ПРОВЕРЕНО.
+  devpi:
+    image: "{{DEVPY_IMAGE}}"
+    profiles: ["python"]
+    restart: unless-stopped
+    ports:
+      - "3141:3141"
+    volumes:
+      - devpi-storage:/data
+    networks:
+      - supply-chain
+
+  # Опционально: docker compose --profile jvm up -d
+  # Механизм запрета неразрешённого описан в nexus/README.md, статус НЕ ПРОВЕРЕНО.
+  nexus:
+    image: "sonatype/nexus3:{{NEXUS_IMAGE_TAG}}"
+    profiles: ["jvm"]
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    volumes:
+      - nexus-storage:/nexus-data
+    networks:
+      - supply-chain
+
+volumes:
+  verdaccio-storage:
+  devpi-storage:
+  nexus-storage:
+
+networks:
+  supply-chain:

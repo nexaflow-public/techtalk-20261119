@@ -1,19 +1,47 @@
+# Назначение: гейт — явный перечень разрешённых пакетов; всё остальное получает отказ.
+# Статус: ПРОВЕРЕНО (синтаксис Verdaccio 5.x). Порядок матчинга — проверить командой ниже.
+# Версии инструментов: Verdaccio 5.x.
+# Пункты CHECKLIST.md: 7, 25.
+#
+# Разница с cache.yaml в одну строку: там catch-all с proxy (разрешено всё),
+# здесь catch-all без proxy (разрешено только перечисленное). В этом весь смысл доклада.
+#
+# Порядок матчинга в Verdaccio: правила читаются сверху вниз, применяется первое
+# совпавшее. Поэтому конкретные записи идут раньше, а '**' — последним. Если
+# поставить '**' первым, он перехватит все запросы, и гейт не сработает.
+# У '**' нет proxy: неразрешённый пакет не уходит на upstream и получает 404
+# на этапе резолвинга, то есть до установки.
+#
+# Отзыв upstream-пакета (пункт 25): кеш продолжает отдавать его, пока запись не
+# удалена из storage вручную. Проверить: удалить пакет из тома verdaccio-storage
+# и повторить запрос — до удаления ответ остаётся положительным.
+#
+# Проверка (а/б/в/г):
+#   (а) что проверяем: отказ для пакета, которого нет в перечне;
+#   (б) npm view pg --registry=http://localhost:4873 ; npm view lodash --registry=http://localhost:4873
+#   (в) ожидаем: pg резолвится, lodash — 404; полный прогон в ../../tests/gate-smoke.sh
+#   (г) https://verdaccio.org/docs/configuration/#packages
+
 uplinks:
   npmjs:
     url: https://registry.npmjs.org/
     cache: true
+
 packages:
   '@yourorg/*':
     access: $authenticated
     publish: $authenticated
-    # без proxy — только своё
+    # без proxy — только свои пакеты
   'express':
     access: $authenticated
     proxy: npmjs
   'pg':
     access: $authenticated
     proxy: npmjs
-  # catch-all отсутствует → всё остальное получает 404
+  # ms не имеет транзитивных зависимостей — удобный пакет для smoke-теста
+  'ms':
+    access: $authenticated
+    proxy: npmjs
+  # catch-all без proxy: всё, что не совпало выше, получает 404
   '**':
     access: $authenticated
-    publish: $authenticated

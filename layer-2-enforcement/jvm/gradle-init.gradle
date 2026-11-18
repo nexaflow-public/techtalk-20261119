@@ -1,0 +1,24 @@
+// Назначение: как перенаправить Gradle на внутренний реестр, если settings.xml не читается.
+// Статус: НЕ ПРОВЕРЕНО (синтаксис init-скрипта и поведение exclusiveContent зависят от версии Gradle).
+// Версии инструментов: Gradle; версию зафиксировать до внедрения.
+// Пункты CHECKLIST.md: 14.
+//
+// (а) Что проверить:
+//   1. подхватывается ли init-скрипт флагом --init-script;
+//   2. указывают ли pluginManagement и repositories только на внутренний URL;
+//   3. запрещает ли exclusiveContent падение на публичный репозиторий;
+//   4. используют ли все проекты (allprojects / dependencyResolutionManagement)
+//      только внутренний репозиторий.
+// (б) Команды:
+//   gradle --version
+//   ./gradlew --init-script <путь>/gradle-init.gradle --no-daemon dependencies
+//   ./gradlew --init-script <путь>/gradle-init.gradle --no-daemon help --info | grep -i maven
+// (в) Ожидаем: в логе только {{MAVEN_REPO_URL}}; неизвестная зависимость даёт ошибку
+//     резолвинга, а не обращение к repo.maven.apache.org.
+// (г) https://docs.gradle.org/current/userguide/init_scripts.html
+//     https://docs.gradle.org/current/userguide/declaring_repositories.html#sec:repository-content-filtering
+//
+// Готовый код init-скрипта сознательно не приведён. В разных версиях Gradle меняются
+// RepositoriesMode, API settingsEvaluated и синтаксис exclusiveContent. Скопированный
+// без проверки скрипт создаёт видимость гейта там, где его нет, — это хуже, чем
+// честно оформленная проверка выше.

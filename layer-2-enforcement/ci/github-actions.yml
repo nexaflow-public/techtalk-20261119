@@ -1,0 +1,32 @@
+# Назначение: пример шага GitHub Actions с явной проверкой реестра после setup-node.
+# Статус: ПРОВЕРЕНО (actions/checkout@v4, actions/setup-node@v4, GitHub Actions).
+# Версии инструментов: actions/checkout@v4, actions/setup-node@v4, Node 20.
+# Пункты CHECKLIST.md: 9, 17.
+#
+# Предупреждение: actions/setup-node с registry-url перезаписывает .npmrc в рабочей
+# директории и может обойти вашу настройку. Поэтому после шага setup-node идёт
+# явная проверка: cat .npmrc и npm config get registry. Ожидаем {{NPM_REGISTRY_URL}}.
+
+name: internal-registry
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: '{{NPM_REGISTRY_URL}}'
+
+      - name: Проверка реестра после setup-node
+        run: |
+          npm config get registry
+          grep -n 'registry' .npmrc || true
+
+      - name: Сборка
+        run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

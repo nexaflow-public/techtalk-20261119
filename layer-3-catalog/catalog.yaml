@@ -1,0 +1,38 @@
+# Назначение: каталог разрешённых пакетов как код.
+# Статус: РАЗБОР БЕЗ РЕШЕНИЯ (внутренняя схема; записи — иллюстрация формата).
+# Версии инструментов: не привязано.
+# Пункты CHECKLIST.md: 19, 20, 21, 22, 25, 26.
+#
+# Изменения только через PR; CODEOWNERS на этот файл обязателен (пункт 19).
+# review_by — срок пересмотра; просроченная запись не считается одобренной.
+# postinstall — отдельный флаг (пункт 21), не выводится из имени пакета.
+# Наличие записи здесь не означает, что пакет можно обновлять без проверки (пункты 42–48).
+
+version: 1
+owner: "{{CATALOG_OWNER}}"
+deputy: "{{CATALOG_DEPUTY}}"
+
+packages:
+  - name: express
+    ecosystem: npm
+    versions: "4.x"
+    approved_by: "{{CATALOG_OWNER}}"
+    ticket: "{{TICKET_PREFIX}}-101"
+    review_by: "{{REVIEW_DATE}}"
+    postinstall: false
+
+  - name: pg
+    ecosystem: npm
+    versions: "8.x"
+    approved_by: "{{CATALOG_OWNER}}"
+    ticket: "{{TICKET_PREFIX}}-102"
+    review_by: "{{REVIEW_DATE}}"
+    postinstall: false
+
+  - name: requests
+    ecosystem: pypi
+    versions: "2.x"
+    approved_by: "{{CATALOG_OWNER}}"
+    ticket: "{{TICKET_PREFIX}}-103"
+    review_by: "{{REVIEW_DATE}}"
+    postinstall: false

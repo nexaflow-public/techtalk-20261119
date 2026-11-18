@@ -1,0 +1,17 @@
+# Назначение: локальные настройки Poetry; про источники — ниже, с пометкой НЕ ПРОВЕРЕНО.
+# Статус: НЕ ПРОВЕРЕНО (приоритеты источников и неявный fallback на PyPI менялись между версиями Poetry).
+# Версии инструментов: Poetry 1.2+ для раздела про источники; зафиксируйте версию до внедрения.
+# Пункты CHECKLIST.md: 11.
+#
+# (а) Что проверить: где задаются источники, их приоритет, остаётся ли PyPI fallback.
+# (б) poetry --version; poetry source list; poetry config --list; poetry lock -vv
+# (в) Ожидаем: источник с приоритетом primary; запрос пакета, которого нет во внутреннем
+#     индексе, не уходит на PyPI; в lock нет files.pythonhosted.org.
+# (г) https://python-poetry.org/docs/repositories/ ; https://python-poetry.org/docs/configuration/
+#
+# ВАЖНО: в Poetry 1.2+ источники задаются в pyproject.toml как [[tool.poetry.source]]
+# с полем priority, а не в poetry.toml. Ниже оставлена только та часть конфига,
+# в которой я уверен; готовый конфиг источников без проверки не привожу.
+
+[virtualenvs]
+in-project = true

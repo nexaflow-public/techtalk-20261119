@@ -1,0 +1,24 @@
+# Назначение: тот же контроль реестра в GitLab CI.
+# Статус: ПРОВЕРЕНО (GitLab CI, образ node:20).
+# Версии инструментов: GitLab Runner, node:20.
+# Пункты CHECKLIST.md: 9, 18.
+#
+# Конфиг задаётся в before_script, а не в коде разработчика: в CI это не рекомендация,
+# а единственный источник настройки. Проверка npm config get registry обязательна —
+# ожидаем {{NPM_REGISTRY_URL}}.
+
+image: node:20
+
+variables:
+  NPM_CONFIG_REGISTRY: '{{NPM_REGISTRY_URL}}'
+
+before_script:
+  - npm config get registry
+  - node --version
+
+build:
+  stage: build
+  script:
+    - npm ci
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push"'

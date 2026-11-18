@@ -1,0 +1,86 @@
+# Назначение: публичная форма issue про стек слушателя, без email и персональных полей.
+# Статус: ПРОВЕРЕНО (GitHub issue forms).
+# Версии инструментов: GitHub issue forms (2021+).
+# Пункты CHECKLIST.md: не относятся (опрос аудитории, а не чеклист внедрения).
+#
+# Все поля необязательные. Отправка issue открывает данные публично — это ожидаемое поведение.
+
+name: Расскажите про свой стек
+description: Публичный опрос: язык и менеджер пакетов, что стоит сейчас, где обходят контроль
+title: "[stack survey] "
+labels: ["stack-survey"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Заполнение анонимно в том смысле, что не запрашиваются имя, email и контакты.
+        Всё, что вы напишете, будет публично доступно в issue.
+
+  - type: dropdown
+    id: stack
+    attributes:
+      label: Язык и менеджер пакетов
+      description: Выберите основной стек, даже если их несколько
+      options:
+        - JavaScript/TypeScript — npm
+        - JavaScript/TypeScript — yarn
+        - JavaScript/TypeScript — pnpm
+        - Python — pip
+        - Python — Poetry
+        - Python — uv
+        - JVM — Maven
+        - JVM — Gradle
+        - Несколько перечисленных
+        - Другое
+      multiple: true
+    validations:
+      required: false
+
+  - type: dropdown
+    id: current
+    attributes:
+      label: Что стоит сейчас для зависимостей
+      options:
+        - Artifactory
+        - Nexus
+        - Другое внутреннее решение
+        - Ничего, публичные реестры напрямую
+        - Не знаю
+      multiple: false
+    validations:
+      required: false
+
+  - type: dropdown
+    id: egress
+    attributes:
+      label: Запрещён ли прямой egress в публичные реестры
+      options:
+        - Да, полностью
+        - Частично
+        - Нет
+        - Не знаю
+      multiple: false
+    validations:
+      required: false
+
+  - type: dropdown
+    id: bypass
+    attributes:
+      label: Как часто обходят контроль
+      options:
+        - Почти никогда
+        - Бывает, но редко
+        - Регулярно
+        - Не знаем, как это измерить
+      multiple: false
+    validations:
+      required: false
+
+  - type: textarea
+    id: pain
+    attributes:
+      label: Что болит больше всего
+      description: Опишите своими словами, без персональных данных
+      placeholder: Например, каталог устаревает быстрее, чем его обновляют
+    validations:
+      required: false

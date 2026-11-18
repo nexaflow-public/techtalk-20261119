@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Назначение: подменить все Maven-репозитории, включая pluginRepositories, на внутренний.
+Статус: ПРОВЕРЕНО (Maven 3.8+).
+Версии инструментов: Maven 3.8+.
+Пункты CHECKLIST.md: 13.
+Проверка:
+  mvn -s settings.xml help:effective-settings -Doutput=/tmp/effective.xml
+  grep -n 'mirrorOf\|<url>' /tmp/effective.xml
+Ожидаем: mirrorOf=* и единственный URL {{MAVEN_REPO_URL}}.
+-->
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 https://maven.apache.org/xsd/settings-1.0.0.xsd">
+  <mirrors>
+    <mirror>
+      <id>internal-gate</id>
+      <name>Internal gate</name>
+      <url>{{MAVEN_REPO_URL}}</url>
+      <!-- '*' покрывает в том числе pluginRepositories: плагины не должны
+           уходить на repo.maven.apache.org мимо гейта (пункт 13). -->
+      <mirrorOf>*</mirrorOf>
+    </mirror>
+  </mirrors>
+</settings>

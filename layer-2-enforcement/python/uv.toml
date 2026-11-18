@@ -1,0 +1,21 @@
+# Назначение: направить uv только на внутренний индекс.
+# Статус: ПРОВЕРЕНО (uv 0.4+). Под вашу версию — проверить командами ниже.
+# Версии инструментов: uv 0.4+.
+# Пункты CHECKLIST.md: 12, 15.
+#
+# Проверка:
+#   uv --version
+#   uv help | grep -i index-strategy
+#   uv pip install --index-strategy first-index <пакет>
+# Ожидаем: пакет берётся из {{PYPI_INDEX_URL}}; на неизвестном пакете — ошибка
+# резолвинга, а не обращение к PyPI.
+#
+# Порядок ключей важен: index-strategy — корневой ключ, его нельзя писать после
+# таблицы [[index]], иначе TOML отнесёт его к этой таблице.
+
+index-strategy = "first-index"
+
+[[index]]
+name = "internal"
+url = "{{PYPI_INDEX_URL}}"
+default = true
